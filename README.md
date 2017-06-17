@@ -11,16 +11,16 @@ expectation is that these values make no signifigant impact on the game.
 * [Extensions](#extensions)
 * [Using the Library](#using-the-library)
   * [Creating Options](#creating-options)
-  * [Reading/Setting Option Values](#reading-setting-option-values)
+  * [Reading/Setting Option Values](#readingsetting-option-values)
   * [Listening for Changes](#listening-for-changes)
 
 # Installation
-0. Install the following dependencies:
-  * [HouraiLib](https://github.com/HouraiTeahouse/HouraiLib)
-0. Install the latest compatible *.unitypackage from the 
+1. Install the following dependencies:
+   * [HouraiLib](https://github.com/HouraiTeahouse/HouraiLib)
+2. Install the latest compatible *.unitypackage from the 
    [releases page](https://github.com/HouraiTeahouse/HouraiOptions/releases)
    for the target Unity3D version.
-0. (Optional): Alternatively simply load the files from the git repository
+3. (Optional): Alternatively simply load the files from the git repository
    instead of unitypackage.
 
 ## Setup
