@@ -33,7 +33,7 @@ as `DontDestroyOnLoad` so that it persists across scene loads.
 ## Extensions
 
 * [HouraiOptions.UI](https://github.com/HouraiTeahouse/HouraiOptions.UI) - 
-  Automatic UI generation for 
+  Automatic UI generation for HouraiOptions created game options.
 
 ## Using the Library
 
@@ -106,7 +106,7 @@ optionsManager.SaveAllChanges();
 optionsManager.RevertAllChanges();
 ```
 
-### Getting OptionMetadata
+### Getting Option Metadata
 ```csharp
 // Get metadata for a type:
 CategoryInfo audioCategory = OptionManager.Instance.GetInfo<AudioOptions>();
