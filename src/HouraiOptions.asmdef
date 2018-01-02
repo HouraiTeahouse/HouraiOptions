@@ -1,0 +1,8 @@
+{
+    "name": "HouraiOptions",
+    "references": [
+        "HouraiLib"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}
