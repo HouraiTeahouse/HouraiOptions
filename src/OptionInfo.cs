@@ -53,10 +53,10 @@ namespace HouraiTeahouse.Options {
             Category = category;
             PropertyInfo = prop;
             Attribute = attr;
-            Key = Argument.NotNull(type).FullName + optionSeperator + 
+            Key = Argument.NotNull(type).FullName + optionSeperator +
                   Argument.NotNull(prop).Name;
             var propType = prop.PropertyType;
-            if (!Prefs.Exists(Key))
+            if (!PlayerPrefs.HasKey(Key))
                 Reset();
             Revert();
         }
@@ -69,8 +69,8 @@ namespace HouraiTeahouse.Options {
         }
 
         /// <summary>
-        /// Gets the options current value. This will change as the 
-        /// object's property is changed. 
+        /// Gets the options current value. This will change as the
+        /// object's property is changed.
         /// </summary>
         /// <returns>the property value</returns>
         public object GetPropertyValue() {
@@ -78,8 +78,8 @@ namespace HouraiTeahouse.Options {
         }
 
         /// <summary>
-        /// Gets the options current value. This will change as the 
-        /// object's property is changed. 
+        /// Gets the options current value. This will change as the
+        /// object's property is changed.
         /// </summary>
         /// <typeparam name="T">the type of value to try to get</typeparam>
         /// <exception cref="System.InvalidCastException">
@@ -99,7 +99,7 @@ namespace HouraiTeahouse.Options {
         public void SetPropertyValue(object val) {
             var oldValue = GetPropertyValue();
             PropertyInfo.SetValue(Category.Instance, val, null);
-            if (oldValue != val && _listeners != null) 
+            if (oldValue != val && _listeners != null)
                 _listeners.DynamicInvoke(oldValue, val);
             if (OptionsManager.Autosave)
                 Save();
@@ -109,15 +109,15 @@ namespace HouraiTeahouse.Options {
         /// Gets the saved value from PlayerPrefs.
         /// </summary>
         /// <returns></returns>
-        public object GetSavedValue() { 
-            return _parser[PropertyInfo.PropertyType](Prefs.GetString(Key)); 
+        public object GetSavedValue() {
+            return _parser[PropertyInfo.PropertyType](PlayerPrefs.GetString(Key));
         }
 
         /// <summary>
         /// Saves the current option value to PlayerPrefs.
         /// </summary>
         public void Save() {
-            Prefs.SetString(Key, GetPropertyValue().ToString());
+            PlayerPrefs.SetString(Key, GetPropertyValue().ToString());
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace HouraiTeahouse.Options {
                 val = CreateDefaultValue(propType);
             }
             SetPropertyValue(val);
-            Prefs.SetString(Key, val.ToString());
+            PlayerPrefs.SetString(Key, val.ToString());
         }
 
         /// <summary>
