@@ -1,0 +1,7 @@
+{
+  "author": "Hourai Teahouse",
+  "name": "com.houraiteahouse.options",
+  "displayName": "Hourai Options",
+  "version": "0.0.1",
+  "description": "Code-first options management for Unity games"
+}
