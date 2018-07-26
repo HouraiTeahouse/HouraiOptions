@@ -1,0 +1,12 @@
+{
+    "name": "com.houraiteahouse.options.Editor",
+    "references": [
+        "com.houraiteahouse.options.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
