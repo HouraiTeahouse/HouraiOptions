@@ -7,7 +7,7 @@ namespace HouraiTeahouse.Options {
 [CreateAssetMenu]
 public class Option : ScriptableObject {
 
-  static IOptionStorage _storage;
+  static IOptionsStorage _storage;
   public static IOptionsStorage Storage {
     get { return _storage; }
     set {
