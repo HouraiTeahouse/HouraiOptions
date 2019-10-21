@@ -7,7 +7,17 @@ namespace HouraiTeahouse.Options {
 [CreateAssetMenu]
 public class Option : ScriptableObject {
 
-  public static IOptionsStorage Storage;
+  static IOptionStorage _storage;
+  public static IOptionsStorage Storage {
+    get { return _storage; }
+    set {
+      if (value == null) {
+        throw new ArgumentException("Option storage cannot be null.");
+      }
+      _storage = value;
+    }
+  }
+
   static Option() {
     Storage = new PlayerPrefsOptionsStorage();
   }
@@ -28,8 +38,8 @@ public class Option : ScriptableObject {
   public string EnumType;
   public EnumOption[] EnumOptions;
 
-  private float? CurrentRawValue;
-  private bool IsLoaded => CurrentRawValue != null;
+  float? CurrentRawValue;
+  bool IsLoaded => CurrentRawValue != null;
 
   public UnityEvent OnValueChanged;
 
@@ -48,7 +58,7 @@ public class Option : ScriptableObject {
     } else if (readType.IsEnum) {
       return (T)Enum.Parse(typeof(T), ((int)rawValue).ToString());
     } else {
-      throw new InvalidOperationException($"Cannot laod option with unsupported type: {readType}");
+      throw new InvalidOperationException($"Cannot load option with unsupported type: {readType}");
     }
   }
 
