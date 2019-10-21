@@ -2,6 +2,12 @@
   "author": "Hourai Teahouse",
   "name": "com.houraiteahouse.options",
   "displayName": "Hourai Options",
-  "version": "0.1.0",
-  "description": "Code-first options management for Unity games"
+  "version": "1.0.0",
+  "description": "Easy options management for Unity games.",
+  "homepage": "https://github.com/HouraiTeahouse/HouraiOptions",
+  "bugs": "https://github.com/HouraiTeahouse/HouraiOptions/issues",
+  "repository": "github:HouraiTeahouse/HouraiOptions",
+  "publishConfig": {
+    "registry": "https://upm.houraiteahouse.net"
+  }
 }
