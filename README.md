@@ -1,150 +1,94 @@
-# HouraiOptions
+# Hourai Options
 
-A Unity3D library for creating, managing, and persisting game settings and 
-options in a straightfoward, code-first manner.
+A Unity3D library for creating, managing, and persisting user facing game
+settings and options in a straightfoward, asset based manner.
 
-The values for these are stored in PlayerPrefs in an unencrypted form. The 
-expectation is that these values make no signifigant impact on the game.
-
-* [Installation](#installation)
-* [Setup](#setup)
-* [Extensions](#extensions)
-* [Using the Library](#using-the-library)
-  * [Creating Options](#creating-options)
-  * [Reading/Setting Option Values](#reading-setting-option-values)
-  * [Listening for Changes](#listening-for-changes)
+By default, these values for these are stored in PlayerPrefs in an unencrypted
+form. The expectation is that these values make no signifigant impact on the
+game.
 
 # Installation
-0. Install the following dependencies:
-  * [HouraiLib](https://github.com/HouraiTeahouse/HouraiLib)
-0. Install the latest compatible *.unitypackage from the 
-   [releases page](https://github.com/HouraiTeahouse/HouraiOptions/releases)
-   for the target Unity3D version.
-0. (Optional): Alternatively simply load the files from the git repository
-   instead of unitypackage.
+In Unity 2018.3 and later, add the following to your `Packages/manifest.json`:
 
-## Setup
-The only requirement to set up is to create a GameObject with a `OptionsManager`
-component. 
+```json
+{
+  "dependencies": {
+    "com.houraiteahouse.options": "1.0.0"
+  },
+  "scopedRegistries": [
+    {
+      "name": "Hourai Teahouse",
+      "url": "https://upm.houraiteahouse.net",
+      "scopes": ["com.houraiteahouse"]
+    }
+  ]
+}
+```
 
-It is strongly recommended to mark the GameObject the OptionsManager is on
-as `DontDestroyOnLoad` so that it persists across scene loads.
-
-## Extensions
-
-* [HouraiOptions.UI](https://github.com/HouraiTeahouse/HouraiOptions.UI) - 
-  Automatic UI generation for 
-
-## Using the Library
+## Usage
 
 ### Creating Options
-```csharp
-// Denote a class as an option category with the OptionCategory attribute
-[OptionCategory("Audio Options")]
-public class AudioOptions {
-    
-    // Denote a single option with the Option attribute
-    // Only valid on properties, does not work on fields.
-    // Can work on private fields.
-    [Option]
-    public float MasterVolume { get; set; }
+Options can be created like any other asset and edited in the Editor via the
+`Create > Option` menu item.
 
-    // Declare a human readable name for the property.
-    // If none is specified, the property's name will be used instead.
-    [Option("BGM Volume")]
-    public float MusicVolume { get; set; }
-
-    // A default value can be supplied
-    [Option("SFX Volume", DefaultValue=0.5f)]
-    public float EffectVolume { get; set; }
-
-}
-
-// Leaving the name empty will use the class name as the category name
-[OptionCategory]
-public class SomeOptions {
-
-    // Strings are valid
-    [Option("Test Option 1")]
-    public string OptionString { get; set; }
-
-    // Booleans are valid
-    [Option("Test Option 2")]
-    public bool OptionBool { get; set; }
-
-    // Integers are valid
-    [Option("Test Option 3")]
-    public int OptionInt { get; set; }
-
-    public void RunSomething() {
-        // Functions and other class elements will be ignored.
-    }
-}
-```
+For ease of general access in code, it's actually advisable to store option
+assets under a Resources folder or using Addressables. This makes fetching all
+available game options simple via well known Unity APIs.
 
 ### Reading/Setting Option Values
+Option assets can be referred to just like any other asset. Serialize a
+reference to a given option in a MonoBehaviour or Scriptable object:
+
 ```csharp
-// Getting reference to the OptionsManager instance:
-// Note: if there does not exist a OptionManager in the loaded scene(s), this will return null.
-OptionsManager optionsManager = OptionManager.Instance;
+public class TestScript : MonoBehavior {
 
-// Getting the options instance for a type: 
-// (The value is a plain old C# object of the specfied type)
-AudioOptions audioOptions = optionsManager.Get<AudioOptions>();
+  // Serialized!
+  public Option MyOption;
 
-// Read the properties like any other object.
-float masterVolume = audioOptions.MasterVolume;
+  public void GetOptionValue() {
+    // Reading values is simple. Note that invalid type conversions will fail.
+    var optionValue = MyOption.Read<float>();
+    Debug.Log(optionValue);
+  }
 
-// Set the properties like any other object.
-// Note: Setting option values like this will not automatically save.
-audioOptions.MasterVolume = Random.value;
+  public void SetOptionValue() {
+    // Setting values is simple. Note that invalid type conversions will fail.
+    MyOption.Set<float(1.3, 0);
 
-// Save changes made to options objects:
-optionsManager.SaveAllChanges();
+    // Setting values can change the interpretation at runtime, but are not
+    // automatically saved to the backing store. Calling Save() will persist the
+    // the value such that it holds across game sessions.
+    MyOption.Save();
+  }
 
-// Revert changes made to options object (loads values from PlayerPrefs)
-optionsManager.RevertAllChanges();
+}
 ```
 
-### Getting OptionMetadata
-```csharp
-// Get metadata for a type:
-CategoryInfo audioCategory = OptionManager.Instance.GetInfo<AudioOptions>();
+### Reading Option Metadata
+Option assets have their metadata readable from each asset as well:
 
-audioCategory.Name         // Get the category's human readable name (System.String)
-audioCategory.Instance     // Get the object instance for the category (System.Object)
-audioCategory.Type         // Get the class type of the category (System.Type)
-audioCategory.Options      // Get all options under the category (IEnumerable<OptionInfo>)
+```
+option.Path            The key under which the option is stored in the backing store.
+option.Type            Choice of [Integer, Float, Enum]
+option.MinValue        The minimum value the option can take on.
+option.MaxValue        The maximum value the option can take on.
 
-// Get option metadata:
-OptionInfo optionInfo = audioCategory.GetInfo("MasterVolume");
+option.Category        What category the option falls under. Useful for grouping
+                       similar options together (i.e. Graphics, Audio, etc.)
+option.DisplayName     If rendered by a UI, what would the display name be.
+option.SortOrder       If rendered by a UI, what priority does this option take.
 
-optionInfo.Name            // Get the option's human readable name (System.String)
-optionInfo.PropertyInfo    // Get the option's PropertyInfo (System.Reflection.PropertyInfo)
-optionInfo.CategoryInfo    // Get the option's Category (CategoryInfo)
-optionInfo.Attribute       // Get the option's option attribute (OptionAttribute)
-optionInfo.Key             // Get the option's PlayerPrefs key (System.String)
+option.EnumType        The fully qualified name of the underlying C# type for the
+                       enum
+option.EnumOptions     Individual enum value metadata.
 ```
 
 ### Listening for Changes
-```csharp
-// Get the OptionInfo for the option:
-OptionInfo volume = OptionManager.Instance.GetInfo<AudioOptions>().GetInfo("MasterVolume");
+Changes can be listened to via Unity Events. Each Option has a `OnValueChanged`
+event that can be edited from the Editor or programmatically listened to.
 
-// Create a callback:
-// before: The prior value.
-// after: the new value.
-Action<float, float> callback = (before, after) => {
-    Debug.Log(string.Format("Before: {0}, After: {1}", before, after));
-};
-
-// These callbacks will be executed each time the property's value changes.
-
-// Add a listener for it to the option
-// Parameter type must match the actual type of the property. Will throw an error otherwise.
-volume.AddListener<float>(callback);
-
-// Remove a listener from thet option:
-// Parameter type must match the actual type of the property. Will throw an error otherwise.
-volume.RemoveListener<float>(callback);
-```
+### Changing the backing storage
+Changing the static property, `Option.Storage` can alter the backing store
+behavior. Implement an alternative `IOptionSotrage` class and substitute it in.
+By default, this is a `PlayerPrefsOptionsStorage` object, whihch uses Unity's
+PlayerPrefs as a backing store.
